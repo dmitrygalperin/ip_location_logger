@@ -1,6 +1,7 @@
 var http = require('http');
 
 //get location with ip api
+	
 	var ip = '98.109.130.111';
 	var options = {
 		hostname: 'www.ip-api.com',
@@ -14,13 +15,14 @@ var http = require('http');
 			body += data;	
 		});
 
-		response.on('end', function() {
+		return response.on('end', function() {
 			var json = JSON.parse(body);
 			if(json.status == 'success') {
 				//action on sucess
-				console.log(json.lat);
-				console.log(json.lon);
-				return true;
+				 var coords = {latitude: json.lat, longitude: json.lon};
+				 console.log(coords);
+				//res.write(coords);
+				 //res.end();
 			} else {
 				return false;
 			}
@@ -28,6 +30,10 @@ var http = require('http');
 	}
 
 	var req = http.request(options, callback);
+	console.log(req.data);
 	req.end();
+
+	
+
 
 
