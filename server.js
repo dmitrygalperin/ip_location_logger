@@ -4,6 +4,8 @@ const fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('ip_logs.db');
 
+var qs = require('querystring');
+
 const hostname = '127.0.0.1';
 const port= 9000;
 
@@ -11,6 +13,7 @@ const rootPath = '/location_app/';
 const jsPath = 'static/locate.js';
 const htmlPath = 'static/location.html';
 const ipApiPath = 'get_coords/';
+const logIpPath = 'log_ip/';
 
 const server = http.createServer((req, res) => {
 
@@ -67,7 +70,24 @@ const server = http.createServer((req, res) => {
 
 			var req = http.request(options, callback);
 			req.end();
-    } else {
+    } else if (req.url == rootPath.concat(logIpPath) &&
+    	req.headers['x-requested-with'] == 'XMLHttpRequest') {
+
+    	if(req.method =='POST') {
+    		var body = '';
+    		req.on('data', function (data) {
+    			body += data;
+    		});
+
+    		req.on('end', function () {
+    			var json = qs.parse(body);
+    			var coords = JSON.stringify(json);
+    			console.log(`Received coordinates from client: ${coords}`);
+    			logVisit(ip, json.lat, json.lon);
+    		});
+    	}
+
+	} else {
     	show404();
     	res.end();
     }
