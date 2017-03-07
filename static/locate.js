@@ -35,9 +35,9 @@ function getLocationAlternate(error) {
 		method: "GET",
 		//dataType: "json",
 		success: function (data) {
-			//var data = JSON.parse(data);
+			var data = JSON.parse(data);
 			//output.innerHTML = "latitude: " + 
-			var position = {coords: {latitude: "lat", longitude: "long"}};
+			var position = {coords: {latitude: data.lat, longitude: data.lon}};
 			showPosition(position);
 		}
 	});
