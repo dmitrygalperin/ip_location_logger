@@ -1,6 +1,9 @@
 const http = require('http');
 const fs = require('fs');
 
+var sqlite3 = require('sqlite3').verbose();
+var db = new sqlite3.Database('ip_logs.db');
+
 const hostname = '127.0.0.1';
 const port= 9000;
 
@@ -45,17 +48,17 @@ const server = http.createServer((req, res) => {
 						var coords = JSON.stringify({lat: json.lat, lon: json.lon});
 						console.log(`ip-api.com returned: ${coords}`);
 						res.write(coords);
+						logVisit(ip, json.lat, json.lon);
 					} else {
 						//find ip location in local db
 						console.log('No result from ip-api.com. Must use local database');
-
 					}
 					res.end();
 				});
 			}
 
 			console.log('HTML5 geolocation failed/denied. Trying ip-api.com API...');
-			
+
 			var options = {
 				hostname: 'www.ip-api.com',
 				port: '80',
@@ -75,6 +78,14 @@ const server = http.createServer((req, res) => {
     }
     
 });
+
+function logVisit(ip, lon, lat) {
+	db.serialize(function () {
+		var query = `INSERT INTO ip_logs VALUES("${ip}", ${lon}, ${lat})`;
+		db.run(query);
+		console.log("IP location logged to DB.")
+	});
+}
 
 server.listen(port, hostname, () => {
 	console.log(`Server running at hostname http://${hostname}:${port}/`);
