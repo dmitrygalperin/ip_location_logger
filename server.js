@@ -1,112 +1,107 @@
 const http = require('http');
 const fs = require('fs');
+var cookie = require('cookie');
 
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database('ip_logs.db');
+var mysql = require('mysql');
+var con = mysql.createConnection({
+    host: "localhost",
+    user: "location_app",
+    password: "l0cat!on",
+    database: "location_app"
+});
+
+con.connect(function(err) {
+    if(err) {
+        console.log(`Connection error: ${err}`);
+        return;
+    }
+
+    console.log('Connected to MySQL');
+});
 
 var qs = require('querystring');
 
 const hostname = '127.0.0.1';
 const port= 9000;
 
+//paths to static content and ajax calls
 const rootPath = '/location_app/';
 const jsPath = 'static/locate.js';
-const htmlPath = 'static/location.html';
+const locationHtmlPath = 'static/location.html';
+const loginHtmlPath = 'static/login.html';
+const adminHtmlPath = 'static/admin.html';
+
 const ipApiPath = 'get_coords/';
 const logIpPath = 'log_ip/';
+const loginPath = 'login/';
+const adminPath = 'admin/';
+const logoutPath = 'logout/';
+
+const routes = {
+    root: { url: rootPath, localPath: 'static/location.html' },
+    clientjs: { url: rootPath.concat('static/locate.js'), localPath: 'static/locate.js'},
+    login: { url: rootPath.concat('login/'), localPath: 'static/login.html' },
+    admin: { url: rootPath.concat('admin/'), localPath: 'static/admin.html'},
+    logout: { url: rootPath.concat('logout/'), localPath: ''}
+};
 
 const server = http.createServer((req, res) => {
 
-	console.log(`Fetching ${req.url}`);
+    console.log(`Fetching ${req.url}`);
 
-	var ip = req.headers['x-forwarded-for'];
-	if (req.url == rootPath) {
-		//display root page
-        fs.readFile(htmlPath, function(err, page) {
-            res.writeHead(200, {'Content-Type': 'text/html'});
-            res.write(page);
-            res.end();
-        });
-    } else if (req.url == rootPath.concat(jsPath)) {
-    	//provide client-side js
-    	script = fs.readFileSync(jsPath, 'utf-8');
-    	res.write(script);
-    	res.end();
-    } else if (req.url == rootPath.concat(ipApiPath) &&
-    	req.headers['x-requested-with'] == 'XMLHttpRequest') {
-    	//only allow ip-api.com API request if requested with AJAX
+    //get client ip from http header
+    exports.ip = req.headers['x-forwarded-for'];
+    var cookies = cookie.parse(req.headers.cookie || '');
+    var controller;
 
-			var callback = function(response){
-				var body = '';
-				response.on('data', function(data) {
-					body += data;	
-				});
-
-				response.on('end', function(err) {
-					var json = JSON.parse(body);
-					if(err) {
-						console.error(err);
-					} else if(json.status == 'success') {
-						//send coords back to AJAX request
-						var coords = JSON.stringify({lat: json.lat, lon: json.lon});
-						console.log(`ip-api.com returned: ${coords}`);
-						res.write(coords);
-						logVisit(ip, json.lat, json.lon);
-					} else {
-						//find ip location in local db
-						console.log('No result from ip-api.com. Must use local database');
-					}
-					res.end();
-				});
-			}
-
-			console.log('HTML5 geolocation failed/denied. Trying ip-api.com API...');
-
-			var options = {
-				hostname: 'www.ip-api.com',
-				port: '80',
-				path: `/json/${ip}`
-			};
-
-			var req = http.request(options, callback);
-			req.end();
-    } else if (req.url == rootPath.concat(logIpPath) &&
-    	req.headers['x-requested-with'] == 'XMLHttpRequest') {
-
-    	if(req.method =='POST') {
-    		var body = '';
-    		req.on('data', function (data) {
-    			body += data;
-    		});
-
-    		req.on('end', function () {
-    			var json = qs.parse(body);
-    			var coords = JSON.stringify(json);
-    			console.log(`Received coordinates from client: ${coords}`);
-    			logVisit(ip, json.lat, json.lon);
-    		});
-    	}
-
-	} else {
-    	show404();
-    	res.end();
+    switch(req.url) {
+        case routes.root.url:
+            controller = require('./controllers/index.js')(fs, req, res, routes);
+            break;
+        case routes.clientjs.url:
+            controller = require('./controllers/serve-client.js')(fs, res, routes);
+            break;
+        //case routes.ipApi.url:
+            //send websocket instead of ajax. must refactor.
+            //controller = require('./controllers/ipapi.js')(req, res, routes, ip);
+            //break;
+        case routes.login.url:
+            controller = require('./controllers/login.js')(fs, req, res, routes, cookie, cookies, con, qs);
+            break;
+        case routes.admin.url:
+            controller = require('./controllers/admin.js')(fs, req, res, routes, cookie, cookies);
+            break;
+        case routes.logout.url:
+            controller = require('./controllers/logout.js')(res, cookie, routes);
+            break;
+        default:
+            controller = require('./controllers/404.js')(res);
+            break;
     }
 
-    function show404() {
-    	res.writeHead(404, {'Content-Type': 'text/plain'});
-    	res.write("404. Not Found");
-    }
+
+
+
+   
     
 });
 
-function logVisit(ip, lon, lat) {
-	db.serialize(function () {
-		var query = `INSERT INTO ip_logs VALUES("${ip}", ${lon}, ${lat})`;
-		db.run(query);
-		console.log("IP location logged to DB.")
-	});
+
+function logVisit(ip, lat, lon) {
+
+    io.emit('coords', {lon: lon, lat: lat});        
+
+    con.query(`INSERT INTO ip_logs (ip_addr, latitude, longitude) VALUES (?, ?, ?)`,
+        [ip, lat, lon], function(err) {
+            if (err) throw err;
+            console.log(`${ip} location logged to database`);
+        });
 }
 
+var io = require('socket.io').listen(server);
+
+var socketio = require('./controllers/socketio.js')(io, con);
+
 server.listen(port, hostname, () => {
-	console.log(`Server running at hostname http://${hostname}:${port}/`);
+    console.log(`Server running at hostname http://${hostname}:${port}/`);
 });

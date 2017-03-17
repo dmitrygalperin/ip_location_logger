@@ -1,55 +1,68 @@
 var output = document.getElementById("location");
 var geoLocationSuccess = true;
+var map;
+var socket = io().connect('http://127.0.0.1:9000');
 
 function getLocation() {
-	if (navigator.geolocation) {
-    	navigator.geolocation.getCurrentPosition(showPosition, getLocationAlternate);
-	} else { 
-    	getLocationAlternate();
-	}
+    //if geolocation is supported, try geolocation
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, getLocationAlternate);
+    } else {
+        //if not supported, use alternate method
+        getLocationAlternate();
+    }
 }
 
 function showPosition(position) {
-	output.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
+    //display coordinates in window
+    output.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
+    var markerPosition = {lat: position.coords.latitude, lng: position.coords.longitude};
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: markerPosition,
+        zoom: 11
+    });
 
-	if(geoLocationSuccess) sendPosition(position.coords.latitude, position.coords.longitude);
+    var marker = new google.maps.Marker({
+        position: markerPosition,
+        map: map,
+        title: 'You are here.'
+    });
+
+    //if geolocation was successful, send coordinates to server for logging
+    if(geoLocationSuccess) sendPosition(position.coords.latitude, position.coords.longitude);
 }
 
 function getLocationAlternate(error) {
-	/*
-	switch(error.code) {
-    	case error.PERMISSION_DENIED:
-        	output.innerHTML = "User denied the request for Geolocation."
-        	break;
-        case error.POSITION_UNAVAILABLE:
-            output.innerHTML = "Location information is unavailable."
-            break;
-        case error.TIMEOUT:
-            output.innerHTML = "The request to get user location timed out."
-            break;
-        case error.UNKNOWN_ERROR:
-            output.innerHTML = "An unknown error occurred."
-            break;
-	}
-	*/
-	geoLocationSuccess = false;
+    //use ip-based location if html5 geolcation failed/denied
+    geoLocationSuccess = false;
 
-	$.ajax({
-		url: "/location_app/get_coords/",
-		method: "GET",
-		success: function (data) {
-			var data = JSON.parse(data);
-			//output.innerHTML = "latitude: " + 
-			var position = {coords: {latitude: data.lat, longitude: data.lon}};
-			showPosition(position);
-		}
-	});
+    //get ip location from server side
+    /*
+    $.ajax({
+        url: "/location_app/get_coords/",
+        method: "GET",
+        success: function (data) {
+            var data = JSON.parse(data);
+            var position = {coords: {latitude: data.lat, longitude: data.lon}};
+            showPosition(position);
+        }
+    });
+    */
+    socket.emit('api-coords-req');
 }
 
 function sendPosition(lat, lon) {
-	$.ajax({
-		url: "/location_app/log_ip/",
-		method: "POST",
-		data: {"lat" : lat, "lon" : lon}
-	});
+    socket.emit('geolocation', {lat: lat, lon: lon});
 }
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 0, lng: 0},
+        zoom: 2
+    });
+}
+
+socket.on('api-coords', function(data) {
+    var position = {coords: {latitude: data.lat, longitude: data.lon}};
+    showPosition(position);     
+});

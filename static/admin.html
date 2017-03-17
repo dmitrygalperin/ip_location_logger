@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Admin - Geolocation</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io().connect('http://127.0.0.1:9000');
+
+            //emit request for coordinate data
+            socket.emit('request-coords');
+
+            socket.on('coords', function(coords) {
+                console.log('coordinate added');
+                var position = {lat: Number(coords.lat), lng: Number(coords.lon)};
+                var marker = new google.maps.Marker({
+                    position: position,
+                    map: map,
+                    title: '!'
+                });
+            });
+        </script>
+        <style>
+            #map {
+                height: 70%;
+                width: 70%;
+            }
+
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+    </head>
+    <body>
+    <div id="location"></div>
+    <div id="map"></div>
+    <div id="footer"><a href="../logout/">Logout</a></div>
+    <script src="/location_app/static/locate.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_g0u7RE55Cq7C7jujy6LTRjdxFg38E90&callback=initMap"
+    async defer></script>
+    <script>
+    </script>
+    </body>
+</html>
