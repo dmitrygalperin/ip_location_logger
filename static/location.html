@@ -3,27 +3,25 @@
     <head>
         <title>Geolocation</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="/location_app/static/css/style.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
-        <style>
-            #map {
-                height: 30%;
-                width: 30%;
-            }
-
-            html, body {
-                height: 100%;
-                margin: 0;
-                padding: 0;
-            }
-    </style>
     </head>
     <body onload="getLocation();">
-    <div id="location"></div>
-    <div id="map"></div>
-    <div id="footer"><a href="./login/">Admin Login</a></div>
+    <div id="title"><h1>Geolocation</h1></div>
+    <div id="content-container">
+        <div id="map"></div>
+        <div id="location">
+            <label for="ip">IP:</label><input type="text" id="ip" readonly size=19/><br>
+            <label for="lat">Latitude:</label><input type="text" id="lat" readonly size=19 /><br>
+            <label for="lon">Longitude:</label><input type="text" id="lon" readonly size=19 /><br>
+
+        </div>
+        <div id="footer"><a href="./login/">Administrator Login</a></div>
+    </div>
     <script src="/location_app/static/locate.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_g0u7RE55Cq7C7jujy6LTRjdxFg38E90&callback=initMap"
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_g0u7RE55Cq7C7jujy6LTRjdxFg38E90"
     async defer>
     </script>
     </body>

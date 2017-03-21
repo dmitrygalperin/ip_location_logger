@@ -1,33 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Geolocation Admin Login</title>
+    <link rel="stylesheet" type="text/css" href="/location_app/static/css/style.css">
+    <title>Geolocation Administrator Login</title>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <div id="title"><h1>Geolocation Administrator Login</h1></div>
 </head>
 <body>
-    <div id="error"></div>
-    <form id="login-form" method="post" action="">
-        <label for="username">Username: </label><input type="text" id="username" name="username" />
-        <label for="password">Password: </label><input type="password" id="password" name="password" />
-        <button id="send-auth">Log In</button>
-    </form>
+    <div id="content-container">
+        <div id="error"></div>
+        <form id="login-form" method="post" action="">
+            <input type="text" id="username" name="username" value="Username" onfocus="this.value='';" onblur="if(this.value=='') {this.value='Username'}"" />
+            <input type="password" id="password" name="password" value="password" onfocus="this.value='';" onblur="if(this.value=='') {this.value='password'}""/>
+            <input type="submit" class="submit" value="Log In" />
+        </form>
 
-    <!--?
-    <script>
-        var socket = io();
-        var errorBox = document.getElementById("error");
-        $(function () {
-            $('#send-auth').click(function() {
-                socket.emit('authentication', {username : $('#username').val(), password : $('#password').val()});
-            });
-        });
-
-        socket.on('auth-response', function(data) {
-            if(data.adminUrl) window.location.replace(data.adminUrl);
-            if(data.err) errorBox.innerHTML = data.err;
-        });
-    </script>
-    <!-->
+    </div>
 </body>
 </html>

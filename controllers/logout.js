@@ -1,6 +1,6 @@
 module.exports = function (res, cookie, routes) {
 
-	    res.setHeader('Set-Cookie', cookie.serialize('username', '', {
+	    res.setHeader('Set-Cookie', cookie.serialize('session', '', {
             httpOnly: true,
             secure: true,
             path: routes.root.url,

@@ -1,0 +1,164 @@
+html, body, div {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    vertical-align: baseline;
+}
+
+@media (min-width: 858px) {
+    html {
+        font-size: 12px;
+    }
+}
+
+@media (min-width: 780px) {
+    html {
+        font-size: 11px;
+    }
+}
+
+@media (min-width: 702px) {
+    html {
+        font-size: 10px;
+    }
+}
+
+@media (min-width: 724px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 623px) {
+    html {
+        font-size: 8px;
+    }
+}
+
+html, body {
+    height: 100vh;
+    width: 100vw;
+    max-width: 100%;
+    max-height: 100%;
+    vertical-align: top;
+    overflow-x: hidden;
+}
+
+div {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1 {
+    margin: 0;
+    font-family: 'Helvetica', sans-serif;
+    color: #111;
+    line-height: -1;
+    letter-spacing: -1px;
+    vertical-align: baseline;
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+#content-container {
+    display: table;
+    height: 90vh;
+    width: 100vw;
+    padding-top: 5vh;
+    font-size: 1rem;
+    vertical-align: top;
+}
+
+#map {
+    height: 70vh;
+    width: 70vw;
+    border-radius: 10px;
+}
+
+form {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+input {
+    font-size:1.5em;
+    color: #111;
+}
+
+
+#title {
+    height: 5vh;
+    width: 100vw;
+    background-color: #ffc447;
+    -webkit-box-shadow: 0px 4px 4px 0px rgba(50, 50, 50, 0.2);
+    -moz-box-shadow:    0px 4px 4px 0px rgba(50, 50, 50, 0.2);
+    box-shadow:         0px 4px 4px 0px rgba(50, 50, 50, 0.2);
+    vertical-align: top;
+}
+
+#location {
+    padding-top: 10px;
+    width: 30vw;
+}
+
+label {
+    font-family: 'Helvetica', sans-serif;
+    color: #111;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.login {
+    font-weight: normal;
+    font-size: 1em;
+}
+
+#dates, #ip, #lat, #lon {
+    border: 0;
+    font-family: 'Lucida Console', Monaco, monospace;
+    font-size: 1.5em;
+    color: #111;
+    float: right;
+}
+
+#footer {
+    width: 70vw;
+    text-align: right;
+}
+
+#slider-container {
+    padding-top: 10px;
+    width: 65vw;
+}
+
+#dates {
+    float: right;
+    text-align: center;
+    padding-top: 10px;
+}
+
+a {
+    font-family: 'Helvetica', sans-serif;
+    color: #111;
+    font-size: 0.9em;
+    display: block;
+}
+
+a:link { 
+    text-decoration: none;
+    color: #111;
+}
+a:visited { 
+    text-decoration: none;
+    color: #111;
+}
+a:active { 
+    text-decoration: none;
+    color: #333;
+}
+a:hover { 
+    text-decoration: none;
+    color: #555;
+}
+

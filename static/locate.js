@@ -1,7 +1,7 @@
-var output = document.getElementById("location");
-var geoLocationSuccess = true;
 var map;
 var socket = io().connect('http://127.0.0.1:9000');
+var markerPosition;
+var geoLocationSuccess = true;
 
 function getLocation() {
     //if geolocation is supported, try geolocation
@@ -15,8 +15,14 @@ function getLocation() {
 
 function showPosition(position) {
     //display coordinates in window
-    output.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
-    var markerPosition = {lat: position.coords.latitude, lng: position.coords.longitude};
+
+    clientIP = position.ip ? `${position.ip}` : ``;
+
+    $("#ip").val(clientIP);
+    $("#lat").val(position.coords.latitude);
+    $("#lon").val(position.coords.longitude);
+
+    markerPosition = {lat: position.coords.latitude, lng: position.coords.longitude};
     map = new google.maps.Map(document.getElementById('map'), {
         center: markerPosition,
         zoom: 11
@@ -36,18 +42,6 @@ function getLocationAlternate(error) {
     //use ip-based location if html5 geolcation failed/denied
     geoLocationSuccess = false;
 
-    //get ip location from server side
-    /*
-    $.ajax({
-        url: "/location_app/get_coords/",
-        method: "GET",
-        success: function (data) {
-            var data = JSON.parse(data);
-            var position = {coords: {latitude: data.lat, longitude: data.lon}};
-            showPosition(position);
-        }
-    });
-    */
     socket.emit('api-coords-req');
 }
 
@@ -55,14 +49,24 @@ function sendPosition(lat, lon) {
     socket.emit('geolocation', {lat: lat, lon: lon});
 }
 
-function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 0, lng: 0},
-        zoom: 2
-    });
-}
-
 socket.on('api-coords', function(data) {
-    var position = {coords: {latitude: data.lat, longitude: data.lon}};
+    var position = {coords: {latitude: data.lat, longitude: data.lon}, ip: data.ip};
     showPosition(position);     
+});
+
+socket.on('client-ip', function(data) {
+        $("#ip").val(data.ip);
+});
+
+socket.on('coords', function(coords) {
+    var position = {lat: Number(coords.lat), lng: Number(coords.lon)};
+
+    if (position.lat != markerPosition.lat && position.lng != markerPosition.lng) {
+        console.log('coordinate added');
+        var marker = new google.maps.Marker({
+            position: position,
+            map: map,
+            title: coords.ip
+        });
+    }
 });

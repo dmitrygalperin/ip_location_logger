@@ -1,6 +1,6 @@
-module.exports = function(fs, res, routes) {
+module.exports = function(fs, res, path) {
 
-    script = fs.readFileSync(routes.clientjs.localPath, 'utf-8');
+    script = fs.readFileSync(path, 'utf-8');
     res.write(script);
     res.end();
 
