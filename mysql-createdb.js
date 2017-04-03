@@ -5,6 +5,8 @@ var mysql  = require("mysql");
 var addSampleData = false;
 if(process.argv[2] == '--import-sample-data') addSampleData = true;
 
+var successMessage = `Database setup completed successfully. Start server with "node server.js"\n
+            Default admin account: username: "admin" password: "password"`;
 
 var con = mysql.createConnection({
     host: config.mysql.host,
@@ -59,24 +61,24 @@ if(addSampleData) {
                     var json = JSON.parse(body);
                     if(err) {
                         console.error(err);
-                    } else if(json.status == 'success') {
-                        var coords = JSON.stringify({lat: json.lat, lon: json.lon});
-                        console.log(`[${counter}/1000] ip-api.com returned: ${coords}`);
+                    } else if(json.latitude) {
+                        var coords = JSON.stringify({lat: json.latitude, lon: json.longitude});
+                        console.log(`[${counter}/1000] API returned: ${coords}`);
 
                         con.query(`UPDATE ip_logs
                             SET latitude = ?, longitude = ? 
-                            WHERE ip_addr = ?`, [json.lat, json.lon, ip], function (err) {
+                            WHERE ip_addr = ?`, [json.latitude, json.longitude, ip], function (err) {
                                 if(err) throw err;
                             });
                     } else {
-                        console.log(`[${counter}/1000] No result from ip-api.com`);
+                        console.log(`[${counter}/1000] No result from API`);
                     }
 
                     counter++;
                     if(counter > 1000) {
                         con.end(function(err) {
                             if(err) throw err;
-                            console.log('Database setup completed successfully.');
+                            console.log(successMessage);
                         }); 
                     }
                 });
@@ -89,17 +91,14 @@ if(addSampleData) {
         function getSampleDataCoords() {
             ip = rows[i].ip_addr;
 
-            var options = {
-                hostname: 'www.ip-api.com',
-                port: '80',
-                path: `/json/${ip}`
-            };
+            var options = config.geoIpOptions;
+            options.path = `/json/${ip}`;
 
             var req = http.request(options, callback);
             req.end();
             i++;
             if(i < iterations) {
-                setTimeout(getSampleDataCoords, 410);
+                setTimeout(getSampleDataCoords, 30);
             }
         }
         getSampleDataCoords();
@@ -126,6 +125,6 @@ con.query(`INSERT INTO users (username, password) VALUES ('admin', 'password');`
 if(!addSampleData) {
     con.end(function(err) {
         if(err) throw err;
-        console.log('Database setup completed successfully.');
+        console.log(successMessage);
     });
 }

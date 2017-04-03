@@ -1,4 +1,5 @@
-const server = require('../server.js');
+const config = require('../config');
+const server = require('../server');
 const http   = require('http');
 
 module.exports = function (io, con) {
@@ -32,25 +33,22 @@ module.exports = function (io, con) {
                     var json = JSON.parse(body);
                     if(err) {
                         console.error(err);
-                    } else if(json.status == 'success') {
+                    } else if(json.latitude) {
                         //send coords back to client
-                        var coords = JSON.stringify({lat: json.lat, lon: json.lon});
-                        console.log(`ip-api.com returned: ${coords}`);
-                        socket.emit('api-coords', {lat: json.lat, lon: json.lon, ip: server.ip});
-                        logVisit(server.ip, json.lat, json.lon);
+                        var coords = JSON.stringify({lat: json.latitude, lon: json.longitude});
+                        console.log(`API returned: ${coords}`);
+                        socket.emit('api-coords', {lat: json.latitude, lon: json.longitude, ip: server.ip});
+                        logVisit(server.ip, json.latitude, json.longitude);
                     } else {
-                        console.log('No result from ip-api.com');
+                        console.log('No result from API');
                     }
                 });
             }
 
-            console.log('HTML5 geolocation failed/denied. Trying ip-api.com API...');
+            console.log('HTML5 geolocation failed/denied. Trying alternate API...');
 
-            var options = {
-                hostname: 'www.ip-api.com',
-                port: '80',
-                path: `/json/${server.ip}`
-            };
+            var options = config.geoIpOptions;
+            options.path = `/json/${server.ip}`;
 
             var req = http.request(options, callback);
             req.end();
@@ -61,7 +59,7 @@ module.exports = function (io, con) {
     function logVisit(ip, lat, lon) {
 
         //emit coordinates to all connected sockets for live update of pages
-        io.emit('coords', {lon: lon, lat: lat, ip: server.ip});
+        io.emit('coords', {lon: lon, lat: lat, ip: server.ip, time: Date.now()});
         io.emit('coords-done');     
 
         con.query(`INSERT INTO ip_logs (ip_addr, latitude, longitude) VALUES (?, ?, ?)`,

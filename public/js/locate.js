@@ -1,5 +1,5 @@
+var socket = socketAddress;
 var map;
-var socket = io().connect('http://127.0.0.1:9000');
 var markerPosition;
 var geoLocationSuccess = true;
 
@@ -42,6 +42,7 @@ function getLocationAlternate(error) {
     //use ip-based location if html5 geolcation failed/denied
     geoLocationSuccess = false;
 
+    //emit request for server-side coordinate retrieval
     socket.emit('api-coords-req');
 }
 
@@ -50,15 +51,18 @@ function sendPosition(lat, lon) {
 }
 
 socket.on('api-coords', function(data) {
+    //receive user coordinates from server and plot on map
     var position = {coords: {latitude: data.lat, longitude: data.lon}, ip: data.ip};
-    showPosition(position);     
+    showPosition(position);
 });
 
 socket.on('client-ip', function(data) {
-        $("#ip").val(data.ip);
+    //receive client ip from server and update div
+    $("#ip").val(data.ip);
 });
 
 socket.on('coords', function(coords) {
+    //plot any new coordinates on map
     var position = {lat: Number(coords.lat), lng: Number(coords.lon)};
 
     if (position.lat != markerPosition.lat && position.lng != markerPosition.lng) {

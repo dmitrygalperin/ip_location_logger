@@ -1,19 +1,35 @@
+const fs = require('fs');
+
 var config = {};
-	
+
 config.server = {};
 config.mysql = {};
+config.tls = {};
 
+config.tls.key = fs.readFileSync('privkey.pem');
+config.tls.cert =fs.readFileSync('fullchain.pem');
 
-//server configuration settings
-config.server.port = 9000;
-config.server.hostname = '127.0.0.1';
-config.server.rootPath = '/location_app/'; //root application path. for root domain path, set to '/'
+config.server.port = 4200;
+config.server.hostname = 'dgalper.in';
+config.server.rootPath = '/';
 
 //mysql credentials
 config.mysql.host = "localhost";
 config.mysql.user = "location_app";
-config.mysql.password = "l0cat!on";
-config.mysql.database = "location_app"; //database name
+config.mysql.password = "P@SSW0RD";
+config.mysql.database = "location_app";
+
+
+/*freegeoip open source IP geolocation API hosted at
+http://freegeoip.net
+
+Github repository: https://github.com/fiorix/freegeoip
+BSD 3-Clause license: https://github.com/fiorix/freegeoip/blob/master/LICENSE
+*/
+config.geoIpOptions = {
+    hostname: 'freegeoip.net',
+    port: '80',
+    path: '/json/'
+};
 
 module.exports = config;
-

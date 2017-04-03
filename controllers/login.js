@@ -1,5 +1,4 @@
  module.exports = function (fs, req, res, routes, cookie, cookies, con, qs) {
-
     //check for post data
     if(req.method =='POST') {
         var body = '';
@@ -15,7 +14,7 @@
             //if username/password provided, check against db
             if(json.username && json.password) {
 
-                con.query(`SELECT username FROM users WHERE username=? AND password=?`, 
+                con.query(`SELECT username FROM users WHERE username=? AND password=?`,
                     [json.username, json.password], function(err, rows) {
 
                     if(err) throw err;
@@ -35,7 +34,7 @@
                     //refresh page
                     redirect(routes.login.url);
                     return;
-                        
+
                 });
             } else {
                 redirect(routes.login.url);

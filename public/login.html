@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" type="text/css" href="/location_app/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/location_app/public/css/style.css">
     <title>Geolocation Administrator Login</title>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <div id="title"><h1>Geolocation Administrator Login</h1></div>
 </head>
 <body>
     <div id="content-container">
+        <div id="title"><h1>Geolocation Administrator Login</h1></div>
         <div id="error"></div>
         <form id="login-form" method="post" action="">
             <input type="text" id="username" name="username" value="Username" onfocus="this.value='';" onblur="if(this.value=='') {this.value='Username'}"" />

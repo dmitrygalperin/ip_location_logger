@@ -1,2 +1,8 @@
 ip_logs.db
 /node_modules/
+/public_bak/
+setup-instructions.txt
+privkey.pem
+fullchain.pem
+contact.txt
+npm-debug.log

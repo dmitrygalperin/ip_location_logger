@@ -4,37 +4,6 @@ html, body, div {
     border: 0;
     vertical-align: baseline;
 }
-
-@media (min-width: 858px) {
-    html {
-        font-size: 12px;
-    }
-}
-
-@media (min-width: 780px) {
-    html {
-        font-size: 11px;
-    }
-}
-
-@media (min-width: 702px) {
-    html {
-        font-size: 10px;
-    }
-}
-
-@media (min-width: 724px) {
-    html {
-        font-size: 16px;
-    }
-}
-
-@media (max-width: 623px) {
-    html {
-        font-size: 8px;
-    }
-}
-
 html, body {
     height: 100vh;
     width: 100vw;
@@ -51,32 +20,17 @@ div {
 
 h1 {
     margin: 0;
-    font-family: 'Helvetica', sans-serif;
-    color: #111;
+    font-family: 'Verdana', sans-serif;
+    color: #f2f2f2;
     line-height: -1;
     letter-spacing: -1px;
     vertical-align: baseline;
-    font-size: 2.5rem;
+    font-size: 2rem;
     text-align: center;
 }
 
-#content-container {
-    display: table;
-    height: 90vh;
-    width: 100vw;
-    padding-top: 5vh;
-    font-size: 1rem;
-    vertical-align: top;
-}
-
-#map {
-    height: 70vh;
-    width: 70vw;
-    border-radius: 10px;
-}
-
 form {
-    display: table-cell;
+    padding: 50px;
     text-align: center;
     vertical-align: middle;
 }
@@ -86,38 +40,47 @@ input {
     color: #111;
 }
 
-
-#title {
-    height: 5vh;
-    width: 100vw;
-    background-color: #ffc447;
-    -webkit-box-shadow: 0px 4px 4px 0px rgba(50, 50, 50, 0.2);
-    -moz-box-shadow:    0px 4px 4px 0px rgba(50, 50, 50, 0.2);
-    box-shadow:         0px 4px 4px 0px rgba(50, 50, 50, 0.2);
-    vertical-align: top;
-}
-
-#location {
-    padding-top: 10px;
-    width: 30vw;
-}
-
 label {
     font-family: 'Helvetica', sans-serif;
     color: #111;
     font-weight: bold;
-    font-size: 1.5em;
+    font-size: 1em;
 }
 
-.login {
-    font-weight: normal;
-    font-size: 1em;
+#content-container {
+    height: 100vh;
+    width: 100vw;
+    font-size: 1rem;
+    vertical-align: top;
+}
+
+#title {
+    height: 50px;
+    width: 100vw;
+    background-color: #002766;
+    -webkit-box-shadow: 0px 4px 4px 0px rgba(50, 50, 50, 0.2);
+    -moz-box-shadow:    0px 4px 4px 0px rgba(50, 50, 50, 0.2);
+    box-shadow:         0px 4px 4px 0px rgba(50, 50, 50, 0.2);
+    vertical-align: top;
+    padding-top: 0.5em;
+}
+
+#map {
+    height: 70vh;
+    width: 70vw;
+    border-radius: 10px;
+    margin: 20px auto;
+}
+
+#location {
+    padding-top: 10px;
+    width: 280px;
 }
 
 #dates, #ip, #lat, #lon {
     border: 0;
     font-family: 'Lucida Console', Monaco, monospace;
-    font-size: 1.5em;
+    font-size: 1em;
     color: #111;
     float: right;
 }
@@ -130,10 +93,11 @@ label {
 #slider-container {
     padding-top: 10px;
     width: 65vw;
+    height: 7vh;
 }
 
 #dates {
-    float: right;
+    font-size: 1.5em;
     text-align: center;
     padding-top: 10px;
 }
@@ -145,20 +109,19 @@ a {
     display: block;
 }
 
-a:link { 
+a:link {
     text-decoration: none;
     color: #111;
 }
-a:visited { 
+a:visited {
     text-decoration: none;
     color: #111;
 }
-a:active { 
+a:active {
     text-decoration: none;
     color: #333;
 }
-a:hover { 
+a:hover {
     text-decoration: none;
     color: #555;
 }
-
