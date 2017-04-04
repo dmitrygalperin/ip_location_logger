@@ -87,7 +87,8 @@ label {
 
 #footer {
     width: 70vw;
-    text-align: right;
+    text-align: center;
+    padding-top:20px;
 }
 
 #slider-container {

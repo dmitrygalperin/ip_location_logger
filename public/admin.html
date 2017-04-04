@@ -10,11 +10,10 @@
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script src="/location_app/public/js/socket.js"></script>
-        <script src="/location_app/public/js/admin.js"></script>
     </head>
     <body>
     <div id="content-container">
-        <div id="title"><h1>Geolocation Administrator</h1></div>
+        <div id="title"><a href="" tabIndex="-1"><h1>Geolocation Administrator</h1></a></div>
         <div id="map"></div>
         <div id ="slider-container">
             <div id="slider"></div>
@@ -23,8 +22,7 @@
         <div id="footer"><a href="./logout">Logout</a></div>
     </div>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_g0u7RE55Cq7C7jujy6LTRjdxFg38E90&callback=initMap"
-    async defer></script>
-    <script>
-    </script>
+     defer></script>
+    <script src="/location_app/public/js/admin.js"></script>
     </body>
 </html>

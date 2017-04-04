@@ -9,7 +9,7 @@ config.tls = {};
 config.tls.key = fs.readFileSync('privkey.pem');
 config.tls.cert =fs.readFileSync('fullchain.pem');
 
-config.server.port = 4200;
+config.server.port = 4201;
 config.server.hostname = 'dgalper.in';
 config.server.rootPath = '/';
 

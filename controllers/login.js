@@ -1,5 +1,5 @@
  module.exports = function (fs, req, res, routes, cookie, cookies, con, qs) {
-    //check for post data
+   //check for post data
     if(req.method =='POST') {
         var body = '';
 

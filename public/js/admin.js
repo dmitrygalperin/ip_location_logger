@@ -1,4 +1,5 @@
 var socket = socketAddress;
+var map;
 var markers = [];
 var minTime = Number.POSITIVE_INFINITY;
 var now = Date.now();
@@ -10,16 +11,9 @@ var currentVisitorsTimeOFfset = 1000*60*5;
 socket.emit('request-coords');
 
 socket.on('coords', function(coords) {
-
-    //create new marker and add to markers array
-    var position = {lat: Number(coords.lat), lng: Number(coords.lon)};
-    var marker = new google.maps.Marker({
-        position: position,
-        title: coords.ip,
-        visible: false
-    });
-
-    markers.push({marker: marker, time: new Date(coords.time)});
+        //create new marker and add to markers array
+        marker = createMarker(coords.lat, coords.lon, coords.ip);
+        markers.push({marker: marker, time: new Date(coords.time)});
 });
 
 socket.on('coords-done', function() {
@@ -103,7 +97,7 @@ socket.on('coords-done', function() {
 
         }
     }
-    
+
 });
 
 function formatDate(date) {
@@ -117,9 +111,9 @@ function logInterp(val, min, max, minValue, maxValue) {
     /*adjust slider behavior to follow logarithmic curve.
     makes slider positions closer to now more precise.
     does not seem to work well with the huge numbers in this use case.*/
-    
+
     var temp = ((Math.log(maxValue) - Math.log(minValue)) * (val - max) / (min - max)) + Math.log(minValue);
-    
+
     var returnVal = (maxValue + minValue) - Math.pow(Math.E, temp);
     return Math.round(returnVal);
 }
@@ -133,6 +127,17 @@ function displayMarkers(min, max) {
             markers[i].marker.setVisible(false);
         }
     }
+}
+
+function createMarker(lat, lon, ip) {
+    var position = {lat: Number(lat), lng: Number(lon)};
+    var marker = new google.maps.Marker({
+        position: position,
+        title: ip,
+        visible: false
+    });
+
+    return marker;
 }
 
 function initMap() {
